@@ -4,6 +4,12 @@ import com.cy.pj.common.exception.ServiceException;
 
 public class Assert {
 
+    public static void isEmpty(String content, String message) {
+        if (content == null || "".equals(content)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     /**
      * 参数有效性校验
      */

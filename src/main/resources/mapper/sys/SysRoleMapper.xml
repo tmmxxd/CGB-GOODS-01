@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysRoleDao">
+    <!-- 通过sql元素定义sql共性代码,其它地方用到了使用include进行包含 -->
+    <sql id="queryWhereId">
+        from sys_roles
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat("%",#{name},"%")
+            </if>
+        </where>
+    </sql>
+    <!-- 基于用户名,动态拼接sql实现数据查询 -->
+    <select id="getRowCount" resultType="int">
+        select count(*)
+        <include refid="queryWhereId"/>
+    </select>
+    <!-- 基于查询条件查询当前页记录 -->
+    <select id="findPageObjects"
+            resultType="com.cy.pj.sys.entity.SysRole">
+        select *
+        <include refid="queryWhereId"/>
+        order by createdTime desc
+        limit #{startIndex},#{pageSize}
+    </select>
+    <!-- <delete id="deleteObjects">
+         delete from sys_logs
+         <choose>
+             <when test="ids!=null and ids.length>0">
+                 <where>
+                     <foreach collection="ids" item="id" separator="or">
+                         id=#{id}
+                     </foreach>
+                 </where>
+             </when>
+             <otherwise>
+                 where id=-1
+             </otherwise>
+         </choose>
+     </delete>-->
+</mapper>
+
+
+
