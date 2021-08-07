@@ -2,6 +2,65 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.pj.sys.dao.SysRoleDao">
+
+    <!--更新角色自身信息-->
+    <update id="updateObject" parameterType="com.cy.pj.sys.entity.SysRole">
+        update sys_roles
+        set
+        name=#{name},
+        note=#{note},
+        modifiedUser=#{modifiedUser},
+        modifiedTime=now()
+        where id=#{id}
+    </update>
+
+    <!--当我们需要进行自定义映射时,可考虑使用resultMap对象,例如
+    1)表中字段与类中属性不匹配(通过驼峰配置也不能解决问题)
+    2)嵌套查询
+    3)表关联查询
+    -->
+    <!--多表关联查询-->
+    <resultMap id="SysRoleMenuVo" type="com.cy.pj.sys.vo.SysRoleMenuVo">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="note" property="note"></result>
+        <collection property="menuIds" ofType="integer">
+            <result column="menu_id"></result>
+        </collection>
+    </resultMap>
+    <select id="findObjectById" resultMap="SysRoleMenuVo">
+        select r.id,r.name,r.note,rm.menu_id
+        from sys_roles r join sys_role_menus rm
+        on r.id = rm.role_id
+        where r.id = #{id}
+    </select>
+    <!--    <resultMap id="SysRoleMenuVo" type="com.cy.pj.sys.vo.SysRoleMenuVo">-->
+    <!--        <id column="id" property="id"/>-->
+    <!--        <collection property="menuIds"-->
+    <!--                    column="id"-->
+    <!--                    select="com.cy.pj.sys.dao.SysRoleMenuDao.findMenuIdsByRoleId"></collection>-->
+    <!--    </resultMap>-->
+    <!--基于角色id查询角色信息-->
+    <!--    <select id="findObjectById" resultMap="SysRoleMenuVo">-->
+    <!--        select id,name,note-->
+    <!--        from sys_roles-->
+    <!--        where id = #{id}-->
+    <!--    </select>-->
+
+
+    <!--插入角色自身信息(思考:如何获取写入到数据库的主键值)
+    1)userGeneratedKeys 表示使用insert操作对应的自增主键值
+    2)keyProperty 表示将自增主键值赋值给参数对象的id属性 -->
+    <insert id="insertObject"
+            parameterType="com.cy.pj.sys.entity.SysRole"
+            useGeneratedKeys="true"
+            keyProperty="id">
+         insert into sys_roles
+         (id,name,note,createdTime,modifiedTime,createdUser,modifiedUser)
+         values
+         (null,#{name},#{note},now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
+
     <!-- 通过sql元素定义sql共性代码,其它地方用到了使用include进行包含 -->
     <sql id="queryWhereId">
         from sys_roles
@@ -24,21 +83,6 @@
         order by createdTime desc
         limit #{startIndex},#{pageSize}
     </select>
-    <!-- <delete id="deleteObjects">
-         delete from sys_logs
-         <choose>
-             <when test="ids!=null and ids.length>0">
-                 <where>
-                     <foreach collection="ids" item="id" separator="or">
-                         id=#{id}
-                     </foreach>
-                 </where>
-             </when>
-             <otherwise>
-                 where id=-1
-             </otherwise>
-         </choose>
-     </delete>-->
 </mapper>
 
 
