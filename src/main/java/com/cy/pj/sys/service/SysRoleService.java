@@ -4,6 +4,8 @@ import com.cy.pj.common.vo.PageObject;
 import com.cy.pj.sys.entity.SysRole;
 import com.cy.pj.sys.vo.SysRoleMenuVo;
 
+import java.util.List;
+
 public interface SysRoleService {
 
 
@@ -22,4 +24,6 @@ public interface SysRoleService {
     int deleteObject(Integer id);
 
     SysRoleMenuVo findObjectById(Integer id);
+
+    List<SysRole> findRoles();
 }

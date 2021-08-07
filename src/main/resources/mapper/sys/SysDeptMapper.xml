@@ -8,6 +8,10 @@
 		from sys_depts c left join sys_depts p on c.parentId=p.id
 	</select>
 
+    <select id="findById" resultType="com.cy.pj.sys.entity.SysDept">
+		select * from sys_depts where id = #{id}
+	</select>
+
     <insert id="insertObject" parameterType="com.cy.pj.sys.entity.SysDept">
 		insert into sys_depts
 		(name,sort,note,parentId,

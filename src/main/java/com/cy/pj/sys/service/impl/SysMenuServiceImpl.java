@@ -34,7 +34,8 @@ public class SysMenuServiceImpl implements SysMenuService {
         int childCount = sysMenuDao.getChildCount(id);
         Assert.isServiceValid(childCount > 0, "请先删除子元素");
         //3.删除菜单对应的关系数据
-        sysRoleMenuDao.deleteObjectsByMenuId(id);
+//        sysRoleMenuDao.deleteObjectsByMenuId(id);
+        sysRoleMenuDao.deleteById("menu_id", id);
         //4.删除菜单自身信息并校验
         int rows = sysMenuDao.deleteObject(id);
         Assert.isServiceValid(rows == 0, "记录可能以及不存在");

@@ -26,4 +26,6 @@ public interface SysDeptDao {
 
     @Delete("delete from sys_depts where id= #{id}")
     int deleteObject(Integer id);
+
+    SysDept findById(@Param("id") Integer id);
 }

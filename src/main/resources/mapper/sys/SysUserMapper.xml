@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysUserDao">
+    <!-- 通过sql元素定义sql共性代码,其它地方用到了使用include进行包含 -->
+    <sql id="queryWhereId">
+        from sys_users u left join sys_depts d on u.deptId=d.id
+        <where>
+            <if test="username!=null and username!=''">
+                username like concat("%",#{username},"%")
+            </if>
+        </where>
+    </sql>
+    <!-- 基于用户名,动态拼接sql实现数据查询 -->
+    <select id="getRowCount" resultType="int">
+        select count(*)
+        <include refid="queryWhereId"/>
+    </select>
+
+    <resultMap id="sysUserDeptVo" type="com.cy.pj.sys.vo.SysUserDeptVo">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="mobile" property="mobile"></result>
+        <result column="valid" property="valid"></result>
+        <result column="email" property="email"></result>
+        <result column="createdTime" property="createdTime"></result>
+        <result column="modifiedTime" property="modifiedTime"></result>
+        <!--one2one,many2one,表关联查询-->
+        <association property="sysDept" javaType="com.cy.pj.sys.entity.SysDept">
+            <!--            <id column="dept_id" property="id"></id>-->
+            <id column="deptId" property="id"></id>
+            <result column="name" property="name"></result>
+            <result column="note" property="note"></result>
+        </association>
+    </resultMap>
+
+    <!-- 基于查询条件查询当前页记录 -->
+    <select id="findPageObjects"
+            resultMap="sysUserDeptVo">
+        -- select u.*,d.id dept_id,d.name,d.note
+        select u.*,d.name,d.note
+        <include refid="queryWhereId"/>
+        order by u.createdTime desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!--禁用或启用对象-->
+    <update id="validById">
+        update sys_users set
+        valid=#{valid},
+        modifiedUser=#{modifiedUser},
+        modifiedTime=now()
+        where id = #{id}
+    </update>
+
+    <select id="isExist" resultType="int">
+        select count(*)
+        from sys_users where
+        ${columnName} = #{columnValue}
+    </select>
+
+    <insert id="insertObject"
+            parameterType="com.cy.pj.sys.entity.SysUser"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_users
+        (username,password,deptId,email,mobile,salt,valid,
+        createdTime,modifiedTime,createdUser,modifiedUser)
+        values
+        (#{username},#{password},#{deptId},#{email},#{mobile},#{salt},#{valid},
+        now(),now(),#{createdUser},#{modifiedUser})
+   </insert>
+
+    <select id="findObjectById"
+            parameterType="int"
+            resultMap="sysUserDeptVo2">
+           select *
+           from sys_users
+           where id=#{id}
+   </select>
+    <resultMap type="com.cy.pj.sys.vo.SysUserDeptVo"
+               id="sysUserDeptVo2">
+        <!-- 一般应用于many2one或one2one做关联查询
+              在当前应用是基于deptId查询部门信息并将其
+             存储到SysUserDeptVo对象的sysDept属性中。
+         -->
+        <association property="sysDept"
+                     column="deptId"
+                     select="com.cy.pj.sys.dao.SysDeptDao.findById">
+        </association>
+    </resultMap>
+
+    <update id="updateObject"
+            parameterType="com.cy.pj.sys.entity.SysUser">
+        update sys_users
+        set username=#{username},
+            mobile=#{mobile},
+            email=#{email},
+            deptId=#{deptId},
+            modifiedTime=now(),
+            modifiedUser=#{modifiedUser}
+         where id=#{id}
+   </update>
+</mapper>
+
+
+

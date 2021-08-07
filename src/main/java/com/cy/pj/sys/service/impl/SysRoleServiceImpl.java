@@ -27,6 +27,11 @@ public class SysRoleServiceImpl implements SysRoleService {
     private PaginationProperties paginationProperties;
 
     @Override
+    public List<SysRole> findRoles() {
+        return sysRoleDao.findRoles();
+    }
+
+    @Override
     public int updateObject(SysRole entity, Integer[] menuIds) {   //1.参数校验
         Assert.isNull(entity, "保存对象不能为空");
         Assert.isEmpty(entity.getName(), "角色名不能为空");
@@ -34,7 +39,8 @@ public class SysRoleServiceImpl implements SysRoleService {
         int rows = sysRoleDao.updateObject(entity);
         //3.保存角色菜单关系数据
         //3.1先删除原有关系数据
-        sysRoleMenuDao.deleteObjectsByRoleId(entity.getId());
+//        sysRoleMenuDao.deleteObjectsByRoleId(entity.getId());
+        sysRoleMenuDao.deleteById("role_id", entity.getId());
         //3.2添加新的关系数据
         sysRoleMenuDao.insertObjects(entity.getId(), menuIds);
         //4.返回结果
@@ -77,8 +83,10 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Override
     public int deleteObject(Integer id) {
         Assert.isArgumentValid(id == null || id < 1, "id值无效");
-        sysRoleMenuDao.deleteObjectsByRoleId(id);
-        sysUserRoleDao.deleteObjectsByRoleId(id);
+//        sysRoleMenuDao.deleteObjectsByRoleId(id);
+        sysRoleMenuDao.deleteById("role_id", id);
+//        sysUserRoleDao.deleteObjectsByRoleId(id);
+        sysUserRoleDao.deleteById("role_id", id);
         int rows = sysRoleDao.deleteObject(id);
         return rows;
     }
