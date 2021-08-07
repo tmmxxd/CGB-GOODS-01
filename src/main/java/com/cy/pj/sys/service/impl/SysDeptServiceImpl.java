@@ -2,10 +2,9 @@ package com.cy.pj.sys.service.impl;
 
 import com.cy.pj.common.util.Assert;
 import com.cy.pj.common.vo.Node;
-import com.cy.pj.sys.dao.SysMenuDao;
-import com.cy.pj.sys.dao.SysRoleMenuDao;
-import com.cy.pj.sys.entity.SysMenu;
-import com.cy.pj.sys.service.SysMenuService;
+import com.cy.pj.sys.dao.SysDeptDao;
+import com.cy.pj.sys.entity.SysDept;
+import com.cy.pj.sys.service.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class SysMenuServiceImpl implements SysMenuService {
-    @Autowired
-    private SysMenuDao sysMenuDao;
+public class SysDeptServiceImpl implements SysDeptService {
 
     @Autowired
-    private SysRoleMenuDao sysRoleMenuDao;
+    private SysDeptDao sysDeptDao;
 
-    //后续追加扩展业务
     @Override
     public List<Map<String, Object>> findObjects() {
-        return sysMenuDao.findObjects();
+        return sysDeptDao.findObjects();
     }
 
     @Override
@@ -31,23 +27,23 @@ public class SysMenuServiceImpl implements SysMenuService {
         //1.参数校验
         Assert.isArgumentValid(id == null || id < 1, "id值无效");
         //2.获取当前菜单对应的子菜单个数并校验
-        int childCount = sysMenuDao.getChildCount(id);
+        int childCount = sysDeptDao.getChildCount(id);
         Assert.isServiceValid(childCount > 0, "请先删除子元素");
         //3.删除菜单对应的关系数据
-        sysRoleMenuDao.deleteObjectsByMenuId(id);
+//        sysRoleMenuDao.deleteObjectsByMenuId(id);
         //4.删除菜单自身信息并校验
-        int rows = sysMenuDao.deleteObject(id);
+        int rows = sysDeptDao.deleteObject(id);
         Assert.isServiceValid(rows == 0, "记录可能以及不存在");
         return rows;
     }
 
     @Override
-    public List<Node> findZtreeMenuNodes() {
-        return sysMenuDao.findZtreeMenuNodes();
+    public List<Node> findZtreeDeptNodes() {
+        return sysDeptDao.findZtreeMenuNodes();
     }
 
     @Override
-    public int saveObject(SysMenu entity) {
+    public int saveObject(SysDept entity) {
         //1.参数校验
         Assert.isArgumentValid(entity == null, "保存对象不能为空");
         Assert.isEmpty(entity.getName(), "菜单名不能为空");
@@ -55,14 +51,13 @@ public class SysMenuServiceImpl implements SysMenuService {
 //            throw new ServiceException("菜单名不能为空");
 //        }
         //2.保存菜单信息
-
-        int rows = sysMenuDao.insertObject(entity);//有可能出现网络中单
+        int rows = sysDeptDao.insertObject(entity);//有可能出现网络中单
         //3.返回结果
         return rows;
     }
 
     @Override
-    public int updateObject(SysMenu entity) {
+    public int updateObject(SysDept entity) {
         //1.参数校验
         Assert.isArgumentValid(entity == null, "保存对象不能为空");
         Assert.isEmpty(entity.getName(), "菜单名不能为空");
@@ -70,9 +65,9 @@ public class SysMenuServiceImpl implements SysMenuService {
 //            throw new ServiceException("菜单名不能为空");
 //        }
         //2.保存菜单信息
-
-        int rows = sysMenuDao.updateObject(entity);//有可能出现网络中单
+        int rows = sysDeptDao.updateObject(entity);//有可能出现网络中单
         //3.返回结果
         return rows;
     }
+
 }
