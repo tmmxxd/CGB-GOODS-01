@@ -37,6 +37,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         return rows;
     }
 
+
     @Override
     public List<Node> findZtreeDeptNodes() {
         return sysDeptDao.findZtreeMenuNodes();
