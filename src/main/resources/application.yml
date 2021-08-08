@@ -18,8 +18,9 @@ spring:
     prefix: classpath:/templates/pages/
     suffix: .html
     cache: false
-
-#mybatis    
+  aop:
+    proxy-target-class: false
+#mybatis
 mybatis:
   configuration:
     default-statement-timeout: 30
@@ -31,11 +32,15 @@ mybatis:
 logging:
   level:
     com.cy: debug
+    # file:D:/CGB1910III/work/a.log
+    # file:
+    # path: D:/CGB1910III/work
 
 #page
 page.config:
-  pageSize: 40
-    
+  pageSize: 8
+
+
     
   
     

@@ -1,17 +1,18 @@
 package com.cy.pj.sys.service.impl;
 
-import java.util.List;
-
 import com.cy.pj.common.config.PaginationProperties;
-import com.cy.pj.common.util.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cy.pj.common.exception.ServiceException;
+import com.cy.pj.common.util.Assert;
 import com.cy.pj.common.vo.PageObject;
 import com.cy.pj.sys.dao.SysLogDao;
 import com.cy.pj.sys.entity.SysLog;
 import com.cy.pj.sys.service.SysLogService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SysLogServiceImpl implements SysLogService {
@@ -20,6 +21,11 @@ public class SysLogServiceImpl implements SysLogService {
 
     @Autowired
     private PaginationProperties paginationProperties;
+
+    @Override
+    public void saveObject(SysLog entity) {
+        sysLogDao.insertObject(entity);
+    }
 
     @Override
     public int deleteObjects(Integer... ids) {
@@ -52,16 +58,18 @@ public class SysLogServiceImpl implements SysLogService {
             throw new IllegalArgumentException("页码值不正确");*/
         Assert.isArgumentValid(pageCurrent == null || pageCurrent < 1, "页码值不正确");
         // 2.基于用户名查询总记录数并校验
-        int rowCount = sysLogDao.getRowCount(username);
-        Assert.isServiceValid(rowCount == 0, "没有找到对应记录");
+//        int rowCount = sysLogDao.getRowCount(username);
+//        Assert.isServiceValid(rowCount == 0, "没有找到对应记录");
        /* if (rowCount == 0)
             throw new ServiceException("没有找到对应记录");*/
         // 3.查询当前页日志记录
         int pageSize = paginationProperties.getPageSize();// 页面大小
+        Page<Object> page = PageHelper.startPage(pageCurrent, pageSize);
         int startIndex = paginationProperties.getStartIndex(pageCurrent);
-        List<SysLog> records = sysLogDao.findPageObjects(username, startIndex, pageSize);
+        List<SysLog> records = sysLogDao.findPageObjects(username);
         // 4.封装查询结果并返回
-        return new PageObject<>(rowCount, records, pageSize, pageCurrent);
+//        return new PageObject<>(rowCount, records, pageSize, pageCurrent);
+        return new PageObject<>((int) page.getTotal(), records, pageSize, pageCurrent);
     }
 
 

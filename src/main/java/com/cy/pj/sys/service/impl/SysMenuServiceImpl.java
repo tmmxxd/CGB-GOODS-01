@@ -27,6 +27,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     @Override
+//    @RequiredCache
     public int deleteObject(Integer id) {
         //1.参数校验
         Assert.isArgumentValid(id == null || id < 1, "id值无效");

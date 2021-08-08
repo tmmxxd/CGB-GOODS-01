@@ -1,5 +1,6 @@
 package com.cy.pj.sys.service.impl;
 
+import com.cy.pj.common.annotation.RequiredLog;
 import com.cy.pj.common.config.PaginationProperties;
 import com.cy.pj.common.exception.ServiceException;
 import com.cy.pj.common.util.Assert;
@@ -105,6 +106,7 @@ public class SysUserServiceImpl implements SysUserService {
         return rows;
     }
 
+    @RequiredLog(operation = "禁用启用")
     @Override
     public int validById(Integer id, Integer valid) {
         //1.参数校验
@@ -125,6 +127,7 @@ public class SysUserServiceImpl implements SysUserService {
         return rows > 0;
     }
 
+    @RequiredLog(operation = "分页查询")
     @Override
     public PageObject<SysUserDeptVo> findPageObjects(String username, Integer pageCurrent) {
         //1.参数校验
