@@ -93,6 +93,12 @@ public class SysLogAspect {
         log.setTime(time);
         log.setCreatedTime(new Date());
         //3.写日志
+//        new Thread() {
+//            public void run() {//频繁创建,销毁会占用很多资源(cup,gc,内存)
+//                sysLogService.saveObject(log);
+//            }
+//        }.start();
+
         sysLogService.saveObject(log);
     }
 }

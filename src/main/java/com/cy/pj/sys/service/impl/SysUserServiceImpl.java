@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -22,6 +25,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
+@Transactional(timeout = 30,
+        readOnly = false,
+        isolation = Isolation.READ_COMMITTED,
+        rollbackFor = Throwable.class,
+        propagation = Propagation.REQUIRED)
 @Service
 public class SysUserServiceImpl implements SysUserService {
     @Autowired
@@ -127,9 +135,16 @@ public class SysUserServiceImpl implements SysUserService {
         return rows > 0;
     }
 
-    @RequiredLog(operation = "分页查询")
+    /**
+     * Propagation.REQUIRED 特性表示参与到一个已有的事务中去,假如没有已有的事务,
+     * 则自己开启事务
+     * Propagation.REQUIRES_NEW 特性表示此方法永远运行在一个新的事务中
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    @RequiredLog(operation = "分页查询")//执行此方法时要进行日志记录
     @Override
     public PageObject<SysUserDeptVo> findPageObjects(String username, Integer pageCurrent) {
+        System.out.println("user.findPage=" + Thread.currentThread().getName());
         //1.参数校验
         Assert.isArgumentValid(pageCurrent == null || pageCurrent < 1, "页码值不正确");
         //2.查询总记录数并校验

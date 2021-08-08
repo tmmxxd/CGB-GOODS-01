@@ -10,7 +10,10 @@ import com.cy.pj.sys.service.SysLogService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,8 +25,16 @@ public class SysLogServiceImpl implements SysLogService {
     @Autowired
     private PaginationProperties paginationProperties;
 
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void saveObject(SysLog entity) {
+        System.out.println("log.save=" + Thread.currentThread().getName());
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         sysLogDao.insertObject(entity);
     }
 
