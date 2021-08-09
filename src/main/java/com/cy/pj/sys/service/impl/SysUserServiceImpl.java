@@ -13,6 +13,8 @@ import com.cy.pj.sys.vo.SysUserDeptVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,6 +41,7 @@ public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private SysUserRoleDao sysUserRoleDao;
 
+    @Cacheable("userCache")
     @Override
     public int updateObject(SysUser entity, Integer[] roleIds) {
         //1.参数有效性验证
@@ -114,6 +117,10 @@ public class SysUserServiceImpl implements SysUserService {
         return rows;
     }
 
+    /**
+     * key:为实际参数的组合,这里的意思是清除和key为 id的值
+     */
+    @CacheEvict(value = "userCache", key = "#entity.id")
     @RequiredLog(operation = "禁用启用")
     @Override
     public int validById(Integer id, Integer valid) {

@@ -20,6 +20,15 @@ spring:
     cache: false
   aop:
     proxy-target-class: false
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 5
+        keep-alive: 30
+        allow-core-thread-timeout: false
+      thread-name-prefix: spring.async.task-
 #mybatis
 mybatis:
   configuration:
@@ -41,7 +50,6 @@ page.config:
   pageSize: 8
 
 
-    
-  
-    
-    
+
+
+

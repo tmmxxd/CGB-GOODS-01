@@ -13,6 +13,14 @@ public class PageController {
 
 
     /**
+     * 跳转到登录页面
+     */
+    @RequestMapping("doLoginUI")
+    public String doLoginUI() {
+        return "login";
+    }
+
+    /**
      * 返回分页页面
      */
     @RequestMapping("doPageUI")

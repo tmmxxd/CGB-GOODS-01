@@ -7,6 +7,8 @@ import com.cy.pj.sys.dao.SysRoleMenuDao;
 import com.cy.pj.sys.entity.SysMenu;
 import com.cy.pj.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +23,20 @@ public class SysMenuServiceImpl implements SysMenuService {
     private SysRoleMenuDao sysRoleMenuDao;
 
     //后续追加扩展业务
+    /**
+     * Cacheable 表示将查询到数据,存储到cache对象中,这个cache对象对应的名字为menuCache
+     * 问题:
+     * 1)请问menuCache中存储的value为谁?方法的返回值
+     * 2)请问menuCache中存储数据时使用的key,在这里默认谁? simpleKey(存储实际参数的值,将这些值得组合作为key)
+     * */
+    @Cacheable("menuCache")
     @Override
     public List<Map<String, Object>> findObjects() {
+        System.out.println("======SysMenuServiceImpl.findObjects==============");
         return sysMenuDao.findObjects();
     }
 
+    @CacheEvict(value = "menuCache", allEntries = true, beforeInvocation = false)
     @Override
 //    @RequiredCache
     public int deleteObject(Integer id) {
@@ -48,6 +59,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         return sysMenuDao.findZtreeMenuNodes();
     }
 
+    @CacheEvict(value = "menuCache", allEntries = true, beforeInvocation = false)
     @Override
     public int saveObject(SysMenu entity) {
         //1.参数校验
@@ -63,6 +75,12 @@ public class SysMenuServiceImpl implements SysMenuService {
         return rows;
     }
 
+    /**
+     * value的值menuCache为具体cache对象
+     * allEntries=true表示要清除cache中所有数据
+     * beforeInvocation 表示要在更新之前执行
+     */
+    @CacheEvict(value = "menuCache", allEntries = true, beforeInvocation = false)
     @Override
     public int updateObject(SysMenu entity) {
         //1.参数校验
