@@ -10,6 +10,9 @@ import java.util.List;
 @Mapper
 public interface SysRoleMenuDao {
 
+    List<Integer> findMenuIdsByRoleIds(
+            @Param("roleIds")Integer[] roleIds);
+
     /**
      * 写入角色和菜单关系数据
      */

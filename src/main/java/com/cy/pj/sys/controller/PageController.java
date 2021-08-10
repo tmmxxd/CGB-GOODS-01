@@ -1,6 +1,9 @@
 package com.cy.pj.sys.controller;
 
+import com.cy.pj.sys.entity.SysUser;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,7 +36,9 @@ public class PageController {
     }
 
     @RequestMapping("doIndexUI")
-    public String doIndexUI() {
+    public String doIndexUI(Model model) {
+        SysUser user = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        model.addAttribute("username", user.getUsername());
         return "starter";//返回给DispatcherServlet
     }//DispatcherServlet会调用视图解析器对象view进行解析,并将解析结果响应客户端.
 

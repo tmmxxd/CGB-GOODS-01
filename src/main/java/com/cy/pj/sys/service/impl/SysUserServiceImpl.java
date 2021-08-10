@@ -11,6 +11,7 @@ import com.cy.pj.sys.entity.SysUser;
 import com.cy.pj.sys.service.SysUserService;
 import com.cy.pj.sys.vo.SysUserDeptVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -118,8 +119,15 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * key:为实际参数的组合,这里的意思是清除和key为 id的值
+     * @CacheEvict key:为实际参数的组合,这里的意思是清除和key为 id的值
+     * @RequiresPermissions 为shiro框架中的一个注解, 此注解用于描述需要授权访问的方法
+     * 注解内部value属性的值(为符合特定规范的字符串[数组也可以]),表示要访问此方法需要的权限
+     * 1)系统执行此方法时会判定此方法上是否有@RequiresPermissions,并且获取注解中的内容
+     * 2)并基于shiro框架底层机制获取当前登陆用户,然后获取用户的权限信息
+     * 3)检测登陆用户的权限中是否包含@RequiresPermissions注解中指定的字符串,假如包含则授权访问
      */
+    @RequiresPermissions("sys:user:update")
+//    @Transactional //假如在spring中没有控制事务,默认是mybatis框架在控制事务
     @CacheEvict(value = "userCache", key = "#entity.id")
     @RequiredLog(operation = "禁用启用")
     @Override

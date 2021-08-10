@@ -101,6 +101,13 @@
             modifiedUser=#{modifiedUser}
          where id=#{id}
    </update>
+
+    <select id="findUserByUserName"
+            resultType="com.cy.pj.sys.entity.SysUser">
+      select *
+      from sys_users
+      where username=#{username}
+   </select>
 </mapper>
 
 

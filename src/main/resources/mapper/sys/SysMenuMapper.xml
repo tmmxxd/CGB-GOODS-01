@@ -33,6 +33,20 @@
            modifiedTime=now()
         where id=#{id}
     </update>
+
+    <select id="findPermissions"
+            resultType="string">
+        select permission <!-- sys:user:update -->
+        from sys_menus
+        where id in
+        <foreach collection="menuIds"
+                 open="("
+                 close=")"
+                 separator=","
+                 item="item">
+            #{item}
+        </foreach>
+    </select>
 </mapper>
 
 

@@ -13,6 +13,20 @@
             (#{roleId},#{item})
         </foreach>
     </insert>
+
+    <select id="findMenuIdsByRoleIds"
+            resultType="int">
+        select menu_id
+        from sys_role_menus
+        where role_id in
+        <foreach collection="roleIds"
+                 open="("
+                 close=")"
+                 separator=","
+                 item="item">
+            #{item}
+        </foreach>
+    </select>
 </mapper>
 
 

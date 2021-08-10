@@ -10,6 +10,11 @@ import java.util.List;
 @Mapper
 public interface SysUserDao {
 
+
+    /**
+     *基于用户名(此名字来自于客户端用户的输入)查找用户对象
+     */
+    SysUser findUserByUserName(String username);
     /**
      * 基于指定列进行记录统计
      *

@@ -14,6 +14,10 @@ import java.util.Map;
 @Mapper
 public interface SysMenuDao {
 
+    List<String> findPermissions(
+            @Param("menuIds")
+                    Integer[] menuIds);
+
     List<Map<String, Object>> findObjects();
 
     @Select("select count(*) from sys_menus where parentId = #{id}")
