@@ -41,11 +41,12 @@ public class SpringShiroConfig {
      */
     @Bean("securityManager")
     public SecurityManager securityManager(Realm realm, CacheManager cacheManager,
-                                           RememberMeManager rememberManager) {
+                                           RememberMeManager rememberManager, SessionManager sessionManager) {
         DefaultWebSecurityManager sManager = new DefaultWebSecurityManager();
         sManager.setRealm(realm);
         sManager.setCacheManager(cacheManager);
         sManager.setRememberMeManager(rememberManager);
+        sManager.setSessionManager(sessionManager);
         return sManager;
     }
 
@@ -148,7 +149,7 @@ public class SpringShiroConfig {
     }
 
     /**
-     *
+     * shiro中的会话管理,基于此对象实现shiro中session对象的管理
      */
     @Bean
     public SessionManager sessionManager() {

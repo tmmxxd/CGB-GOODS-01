@@ -1,6 +1,7 @@
 package com.cy.pj.sys.service;
 
 import com.cy.pj.common.vo.Node;
+import com.cy.pj.common.vo.SysUserMenuVo;
 import com.cy.pj.sys.entity.SysMenu;
 
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.Map;
  * 菜单模块的业务接口
  */
 public interface SysMenuService {
+
+
+    List<SysUserMenuVo> findUserMenus(Integer userId);
 
     /**
      * 查询所有菜单以及带单对应的上级菜单

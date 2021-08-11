@@ -47,6 +47,30 @@
             #{item}
         </foreach>
     </select>
+
+
+    <resultMap id="sysUserMenuVo" type="com.cy.pj.common.vo.SysUserMenuVo">
+        <id property="id" column="pid"/>
+        <result property="name" column="pname"/>
+        <result property="url" column="purl"/>
+        <collection property="childs" ofType="com.cy.pj.common.vo.SysUserMenuVo">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="url" column="url"/>
+        </collection>
+    </resultMap>
+    <!--查询用户对应的菜单信息(查询用户对应一级菜单和此菜单下的二级菜单)-->
+    <select id="findUserMenus" resultMap="sysUserMenuVo">
+        select p.id pid,p.name pname,p.url purl,c.id,c.name,c.url
+        from sys_menus p join sys_menus c
+        on c.parentId = p.id
+        <where>
+            <foreach collection="menuIds" item="menuId" separator="or" open="(" close=")">
+                c.id = #{menuId}
+            </foreach>
+            and p.parentId is null
+        </where>
+    </select>
 </mapper>
 
 

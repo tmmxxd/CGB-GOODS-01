@@ -2,8 +2,10 @@ package com.cy.pj.sys.service.impl;
 
 import com.cy.pj.common.util.Assert;
 import com.cy.pj.common.vo.Node;
+import com.cy.pj.common.vo.SysUserMenuVo;
 import com.cy.pj.sys.dao.SysMenuDao;
 import com.cy.pj.sys.dao.SysRoleMenuDao;
+import com.cy.pj.sys.dao.SysUserRoleDao;
 import com.cy.pj.sys.entity.SysMenu;
 import com.cy.pj.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,28 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Autowired
     private SysRoleMenuDao sysRoleMenuDao;
 
-    //后续追加扩展业务
+    @Autowired
+    private SysUserRoleDao sysUserRoleDao;
+
+    @Override
+    public List<SysUserMenuVo> findUserMenus(Integer userId) {
+        //1.参数校验(获取用户对应的角色id)
+        List<Integer> roleIds = sysUserRoleDao.findRoleIdsByUserId(userId);
+        //2.基于角色id获取对于菜单id并校验
+        List<Integer> menuIds = sysRoleMenuDao.findMenuIdsByRoleIds(roleIds.toArray(new Integer[]{}));
+        //3.基于菜单id获取菜单信息
+        List<SysUserMenuVo> lsit = sysMenuDao.findUserMenus(menuIds.toArray(new Integer[]{}));
+        return lsit;
+    }
+
+//后续追加扩展业务
+
     /**
      * Cacheable 表示将查询到数据,存储到cache对象中,这个cache对象对应的名字为menuCache
      * 问题:
      * 1)请问menuCache中存储的value为谁?方法的返回值
      * 2)请问menuCache中存储数据时使用的key,在这里默认谁? simpleKey(存储实际参数的值,将这些值得组合作为key)
-     * */
+     */
     @Cacheable("menuCache")
     @Override
     public List<Map<String, Object>> findObjects() {
