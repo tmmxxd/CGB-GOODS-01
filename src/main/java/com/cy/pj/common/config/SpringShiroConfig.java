@@ -65,6 +65,7 @@ public class SpringShiroConfig {
         ShiroFilterFactoryBean sfBean = new ShiroFilterFactoryBean();
         //2.为sfBean对象注入SecurityManage对象
         sfBean.setSecurityManager(securityManager);
+        System.out.println(123);
         //3.设置登录url(没有经过认证的请求,需要跳转到这个路径对象的页面)
         sfBean.setLoginUrl("/doLoginUI");
         //4.设置请求过滤规则?(例如哪些请求要进行认证检测,哪些请求不要)
